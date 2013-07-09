@@ -1,1 +1,9 @@
-<p> I am here </p>
+  <% @user.tweets.each do |tweet|%>
+
+ <% tweet[:tweet].each do |tweet| %>
+   <ul>
+    <li><%= tweet %></li>
+  </ul>
+<%end%>
+
+<%end%>
