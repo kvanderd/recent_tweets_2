@@ -7,36 +7,38 @@ get '/' do
 end
 
 get '/:username' do
-
   @user = User.find_or_create_by_username(params[:username])
-  p @user
-
   if @user.tweets.empty?
-
     user_tweets = Twitter.user_timeline(@user.username)
-
-    @recent_tweets = []
-
     user_tweets.each do |tweet|
-      @recent_tweets << tweet.text
+      new_tweets = Tweet.create(tweet: tweet.text, user_id: @user.id)
+      @user.tweets << new_tweets
     end
-
-    p @recent_tweets
-
-    new_tweets = Tweet.create(tweet: @recent_tweets, user_id: @user.id)
-    p new_tweets
-    @user.tweets << new_tweets
+    erb :view_tweets
     # User#fetch_tweets! should make an API call
     # and populate the tweets table
     #
     # Future requests should read from the tweets table
     # instead of making an API call
     # @user.fetch_tweets!
-    erb :view_tweets
+  else
+    if @user.tweets_stale?
+      @user.fetch_tweets!
+      erb :view_tweets
+    else
+      @user.tweets
+      erb :view_existing_tweets
+    # grab last tweet from twitter api
+    # pop off last tweet from stored tweets arrray
+    # if theyre the same
+    #   return the tweets in the database
+    # else
+    #   scrap the twitter api for last ten tweets and save to db
+    #   display new tweet data
+    end
+
   end
-
   # @tweets = @user.tweets.limit(10)
-
 end
 
 

@@ -1,9 +1,5 @@
   <% @user.tweets.each do |tweet|%>
-
- <% tweet[:tweet].each do |tweet| %>
    <ul>
-    <li><%= tweet %></li>
+    <li><%= tweet[:tweet] %></li>
   </ul>
-<%end%>
-
 <%end%>
